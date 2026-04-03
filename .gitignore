@@ -1,0 +1,11 @@
+.git
+.env
+.env.local
+uisp-backup/*.uisp
+uisp_data/
+uisp_config/
+*.log
+.DS_Store
+node_modules/
+.idea/
+.vscode/

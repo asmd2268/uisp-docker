@@ -1,0 +1,50 @@
+# Docker Compose - UISP Deployment
+services:
+  uisp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uisp
+    restart: unless-stopped
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
+      - SYS_BOOT
+    ports:
+      # HTTP and HTTPS
+      - "80:80"
+      - "443:443"
+      # UISP UI ports
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      # Persistent data storage
+      - uisp_data:/data
+      # Configuration storage
+      - uisp_config:/etc/uisp
+      # Backup mount (read-only)
+      - ./uisp-backup:/backup:ro
+    environment:
+      - TZ=UTC
+    networks:
+      - uisp_network
+    # Health check disabled for faster startup
+    # Uncomment after UISP fully installs
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 120s
+
+# Named volumes for persistent data
+volumes:
+  uisp_data:
+    driver: local
+  uisp_config:
+    driver: local
+
+# Bridge network for container communication
+networks:
+  uisp_network:
+    driver: bridge

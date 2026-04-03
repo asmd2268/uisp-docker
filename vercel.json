@@ -1,0 +1,5 @@
+{
+  "buildCommand": "echo 'Docker deployment - no build step required'",
+  "outputDirectory": ".",
+  "framework": "other"
+}

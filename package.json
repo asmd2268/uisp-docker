@@ -1,0 +1,27 @@
+{
+  "name": "uisp-docker",
+  "version": "1.0.0",
+  "description": "Docker Compose deployment for Ubiquiti UISP with backup restoration",
+  "main": "docker-compose.yml",
+  "scripts": {
+    "deploy": "bash deploy.sh",
+    "logs": "docker compose logs -f uisp",
+    "stop": "docker compose down",
+    "restart": "docker compose restart uisp",
+    "shell": "docker exec -it uisp bash"
+  },
+  "keywords": [
+    "docker",
+    "docker-compose",
+    "uisp",
+    "ubiquiti",
+    "network-management",
+    "deployment"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/uisp-docker.git"
+  }
+}

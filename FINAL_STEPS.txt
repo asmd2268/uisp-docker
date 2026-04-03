@@ -1,0 +1,72 @@
+===========================================
+UISP DOCKER - READY FOR GITHUB & VERCEL
+===========================================
+
+Your repository is ready with 3 commits. Here's what to do next:
+
+STEP 1: Create GitHub Repository
+─────────────────────────────────
+1. Go to https://github.com/new
+2. Name: uisp-docker
+3. Public repository
+4. Click "Create repository"
+
+STEP 2: Push Your Code
+──────────────────────
+Copy & paste this in your terminal:
+
+git remote add origin https://github.com/YOUR_USERNAME/uisp-docker.git
+git branch -M main
+git push -u origin main
+
+(Replace YOUR_USERNAME with your GitHub username)
+
+STEP 3: Deploy to Vercel
+────────────────────────
+Option A - Dashboard (Easiest):
+  1. Go to https://vercel.com/new
+  2. Click "Import Git Repository"
+  3. Select uisp-docker
+  4. Click "Deploy"
+
+Option B - CLI:
+  npm i -g vercel
+  vercel --prod
+
+STEP 4: Verify
+──────────────
+After deployment, your project lives at:
+  https://uisp-docker.vercel.app
+
+STEP 5: How Users Deploy
+─────────────────────────
+git clone https://github.com/YOUR_USERNAME/uisp-docker.git
+cd uisp-docker
+cp /path/to/backup uisp-backup/
+./deploy.sh
+
+===========================================
+FILES INCLUDED
+===========================================
+✓ README.md               - Main guide
+✓ DEPLOYMENT.md          - Full instructions
+✓ QUICK_START.md         - Fast setup guide
+✓ GITHUB_SETUP.md        - This process
+✓ DHI_MIGRATION.md       - Security hardening
+✓ Dockerfile             - Container image
+✓ docker-compose.yml     - Orchestration
+✓ deploy.sh              - Automated script
+✓ package.json           - Metadata
+✓ vercel.json            - Vercel config
+✓ .gitignore             - Git rules
+
+===========================================
+NOTES
+===========================================
+• Backup file NOT committed to git (see .gitignore)
+• Users add their own backup before deploying
+• All documentation is hosted on Vercel
+• Repository is public (clone-able by anyone)
+• VPS deployment uses deploy.sh script
+
+Ready to push? See STEP 2 above!

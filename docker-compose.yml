@@ -1,5 +1,31 @@
-# Docker Compose - UISP Deployment
+version: '3.8'
+
 services:
+  # Nginx reverse proxy with SSL
+  nginx:
+    image: nginx:alpine
+    container_name: uisp-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx_cache:/var/cache/nginx
+    networks:
+      - uisp_network
+    depends_on:
+      - uisp
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # UISP application container
   uisp:
     build:
       context: .
@@ -10,41 +36,53 @@ services:
     cap_add:
       - SYS_ADMIN
       - SYS_BOOT
-    ports:
-      # HTTP and HTTPS
-      - "80:80"
-      - "443:443"
-      # UISP UI ports
-      - "8080:8080"
-      - "8443:8443"
+    # Internal ports only (exposed via nginx)
+    expose:
+      - "80"
+      - "443"
+      - "8080"
+      - "8443"
     volumes:
       # Persistent data storage
       - uisp_data:/data
-      # Configuration storage
       - uisp_config:/etc/uisp
       # Backup mount (read-only)
       - ./uisp-backup:/backup:ro
     environment:
       - TZ=UTC
+      - UISP_DOMAIN=almftres.uisp.com
+      - UISP_IP=192.168.64.2
     networks:
       - uisp_network
-    # Health check disabled for faster startup
-    # Uncomment after UISP fully installs
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8080"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 120s
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
 
-# Named volumes for persistent data
+  # Certificate management with certbot
+  certbot:
+    image: certbot/certbot:latest
+    container_name: uisp-certbot
+    restart: unless-stopped
+    volumes:
+      - ./ssl:/etc/letsencrypt
+      - ./certbot-webroot:/var/www/certbot
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'
+    networks:
+      - uisp_network
+    depends_on:
+      - nginx
+
 volumes:
   uisp_data:
     driver: local
   uisp_config:
     driver: local
+  nginx_cache:
+    driver: local
 
-# Bridge network for container communication
 networks:
   uisp_network:
     driver: bridge
